@@ -13,6 +13,10 @@ Steps: 6, 7 & 8 - Split, Train, Evaluate
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from pathlib import Path
+
+IMAGES_DIR = Path(__file__).parent / "images"
+IMAGES_DIR.mkdir(exist_ok=True)
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
@@ -166,9 +170,9 @@ def plot_predictions(y_test: pd.Series, y_pred: np.ndarray) -> None:
     plt.title("Actual vs Predicted House Prices", fontsize=14, fontweight="bold")
     plt.legend()
     plt.tight_layout()
-    plt.savefig("model_predictions.png", bbox_inches="tight", dpi=150)
+    plt.savefig(IMAGES_DIR / "model_predictions.png", bbox_inches="tight", dpi=150)
     plt.show()
-    print("Prediction plot saved as: model_predictions.png")
+    print("Prediction plot saved as: images/model_predictions.png")
 
 
 def plot_residuals(y_test: pd.Series, y_pred: np.ndarray) -> None:
@@ -191,9 +195,9 @@ def plot_residuals(y_test: pd.Series, y_pred: np.ndarray) -> None:
     plt.ylabel("Residuals ($)", fontsize=12)
     plt.title("Residuals vs Predicted Values", fontsize=14, fontweight="bold")
     plt.tight_layout()
-    plt.savefig("model_residuals.png", bbox_inches="tight", dpi=150)
+    plt.savefig(IMAGES_DIR / "model_residuals.png", bbox_inches="tight", dpi=150)
     plt.show()
-    print("Residuals plot saved as: model_residuals.png")
+    print("Residuals plot saved as: images/model_residuals.png")
 
 
 # ─────────────────────────────────────────────────────────────────────────────

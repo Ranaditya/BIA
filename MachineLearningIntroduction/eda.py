@@ -12,6 +12,10 @@ Steps: 4 & 5 - EDA & Outlier Detection
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+from pathlib import Path
+
+IMAGES_DIR = Path(__file__).parent / "images"
+IMAGES_DIR.mkdir(exist_ok=True)
 
 
 # ── Visual style ─────────────────────────────────────────────────────────────
@@ -75,9 +79,9 @@ def plot_histograms(df: pd.DataFrame) -> None:
 
     plt.suptitle("Feature Distributions", fontsize=14, fontweight="bold", y=1.01)
     plt.tight_layout()
-    plt.savefig("eda_histograms.png", bbox_inches="tight", dpi=150)
+    plt.savefig(IMAGES_DIR / "eda_histograms.png", bbox_inches="tight", dpi=150)
     plt.show()
-    print("Histogram saved as: eda_histograms.png")
+    print("Histogram saved as: images/eda_histograms.png")
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -112,9 +116,9 @@ def plot_scatter(df: pd.DataFrame, target_col: str = "Price") -> None:
 
     plt.suptitle(f"Feature vs {target_col} (Scatter Plots)", fontsize=14, fontweight="bold", y=1.01)
     plt.tight_layout()
-    plt.savefig("eda_scatter_plots.png", bbox_inches="tight", dpi=150)
+    plt.savefig(IMAGES_DIR / "eda_scatter_plots.png", bbox_inches="tight", dpi=150)
     plt.show()
-    print("Scatter plots saved as: eda_scatter_plots.png")
+    print("Scatter plots saved as: images/eda_scatter_plots.png")
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -146,9 +150,9 @@ def plot_correlation_heatmap(df: pd.DataFrame) -> None:
     )
     plt.title("Correlation Heatmap", fontsize=14, fontweight="bold")
     plt.tight_layout()
-    plt.savefig("eda_correlation_heatmap.png", bbox_inches="tight", dpi=150)
+    plt.savefig(IMAGES_DIR / "eda_correlation_heatmap.png", bbox_inches="tight", dpi=150)
     plt.show()
-    print("Correlation heatmap saved as: eda_correlation_heatmap.png")
+    print("Correlation heatmap saved as: images/eda_correlation_heatmap.png")
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -182,9 +186,9 @@ def plot_boxplots(df: pd.DataFrame) -> None:
 
     plt.suptitle("Outlier Detection — Box Plots", fontsize=14, fontweight="bold", y=1.01)
     plt.tight_layout()
-    plt.savefig("eda_boxplots.png", bbox_inches="tight", dpi=150)
+    plt.savefig(IMAGES_DIR / "eda_boxplots.png", bbox_inches="tight", dpi=150)
     plt.show()
-    print("Box plots saved as: eda_boxplots.png")
+    print("Box plots saved as: images/eda_boxplots.png")
 
 
 def detect_outliers_iqr(df: pd.DataFrame) -> dict:
