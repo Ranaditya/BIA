@@ -40,22 +40,29 @@ def print_outlier_summary(dataframe: pd.DataFrame) -> None:
 
 
 def create_visualizations(dataframe: pd.DataFrame) -> None:
-    """Create required EDA charts and save them under images/."""
+    """Create required EDA charts, save them, and display them."""
     PLOT_DIR.mkdir(exist_ok=True)
     sns.set_theme(style="whitegrid")
+    saved_files: list[Path] = []
 
     plt.figure(figsize=(8, 5))
     sns.countplot(data=dataframe, x="origin")
     plt.title("Car Count by Origin")
     plt.tight_layout()
-    plt.savefig(PLOT_DIR / "countplot_origin.png", dpi=150)
+    countplot_path = PLOT_DIR / "countplot_origin.png"
+    plt.savefig(countplot_path, dpi=150)
+    saved_files.append(countplot_path)
+    plt.show()
     plt.close()
 
     plt.figure(figsize=(8, 5))
     sns.histplot(data=dataframe, x=TARGET_COLUMN, kde=True)
     plt.title("Distribution of MPG")
     plt.tight_layout()
-    plt.savefig(PLOT_DIR / "distplot_mpg.png", dpi=150)
+    distplot_path = PLOT_DIR / "distplot_mpg.png"
+    plt.savefig(distplot_path, dpi=150)
+    saved_files.append(distplot_path)
+    plt.show()
     plt.close()
 
     numeric_columns = dataframe.select_dtypes(include=[np.number]).columns
@@ -63,7 +70,10 @@ def create_visualizations(dataframe: pd.DataFrame) -> None:
     sns.heatmap(dataframe[numeric_columns].corr(), annot=False, cmap="coolwarm", center=0)
     plt.title("Correlation Heatmap")
     plt.tight_layout()
-    plt.savefig(PLOT_DIR / "correlation_heatmap.png", dpi=150)
+    heatmap_path = PLOT_DIR / "correlation_heatmap.png"
+    plt.savefig(heatmap_path, dpi=150)
+    saved_files.append(heatmap_path)
+    plt.show()
     plt.close()
 
 

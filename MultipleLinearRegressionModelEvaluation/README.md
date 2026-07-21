@@ -1,6 +1,6 @@
 # Multiple Linear Regression Model Evaluation
 
-This project builds a **Multiple Linear Regression** model to predict car mileage (`mpg`) from the car dataset in `data/3304db2c078848f8ad85537da4d87645_car_(1).csv`.
+This project builds a **Multiple Linear Regression** model to predict car mileage (`mpg`) from the car dataset in `data/car_mileage_dataset.csv`.
 
 ## Goal
 
@@ -84,6 +84,8 @@ If you already activated your virtual environment, you can run:
 python main.py
 ```
 
+Plots are displayed with `plt.show()` and also saved as image files by default.
+
 ## Evaluation Metrics
 
 The script reports the following regression metrics:
@@ -114,7 +116,7 @@ MultipleLinearRegressionModelEvaluation/
 ├── preprocessing.py
 ├── model.py
 ├── data/
-│   └── 3304db2c078848f8ad85537da4d87645_car_(1).csv
+│   └── car_mileage_dataset.csv
 └── images/
   ├── countplot_origin.png
   ├── distplot_mpg.png

@@ -8,7 +8,7 @@ import pandas as pd
 
 
 PROJECT_DIR = Path(__file__).resolve().parent
-DATA_PATH = PROJECT_DIR / "data" / "3304db2c078848f8ad85537da4d87645_car_(1).csv"
+DATA_PATH = PROJECT_DIR / "data" / "car_mileage_dataset.csv"
 
 
 def load_data(file_path: Path = DATA_PATH) -> pd.DataFrame:
