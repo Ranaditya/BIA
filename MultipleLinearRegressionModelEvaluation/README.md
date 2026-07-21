@@ -6,18 +6,38 @@ This project builds a **Multiple Linear Regression** model to predict car mileag
 
 Predict `mpg` using the available vehicle features and evaluate the model with standard regression metrics.
 
+## Project Architecture
+
+The project is organized into focused modules with `main.py` as the orchestrator:
+
+- `data_loader.py`
+  - Loads the CSV dataset
+  - Prints dataset inspection details (shape, dtypes, missing values, duplicates)
+- `eda.py`
+  - Prints descriptive statistics
+  - Reports outlier counts with IQR logic
+  - Generates EDA plots in `images/`
+- `preprocessing.py`
+  - Standardizes column names
+  - Handles duplicates and empty strings
+  - Applies IQR-based outlier capping on numeric columns
+- `model.py`
+  - Builds the Multiple Linear Regression pipeline
+  - Performs train/test split
+  - Trains and evaluates with MAE, MSE, and R2
+- `main.py`
+  - Coordinates all steps in order
+  - Prints step headers and a final summary
+
 ## Workflow
 
-The script in `main.py` follows the workflow below step by step:
+The orchestration in `main.py` runs the workflow in this sequence:
 
-1. Import the required libraries.
-2. Load the dataset with Pandas.
-3. Clean the data by standardizing column names, removing duplicates, and handling missing values.
-4. Detect and cap numeric outliers using the IQR rule.
-5. Perform basic visual analysis with plots.
-6. Split the dataset into training and testing sets.
-7. Train a Multiple Linear Regression model.
-8. Evaluate the model with MAE, MSE, and R2.
+1. Load and inspect dataset
+2. Exploratory data analysis and visualization
+3. Data preprocessing and outlier capping
+4. Model training and evaluation
+5. Final metric summary
 
 ## Dataset Notes
 
@@ -43,7 +63,7 @@ Important observations:
 
 When the script runs, it generates:
 
-- Console output showing dataset shape, missing values, duplicate rows, and evaluation metrics.
+- Console output showing step-by-step pipeline execution and evaluation metrics.
 - Visualizations saved in the `images/` folder:
   - `countplot_origin.png`
   - `distplot_mpg.png`
@@ -55,6 +75,12 @@ From the repository root:
 
 ```bash
 cd MultipleLinearRegressionModelEvaluation
+..\.venv-1\Scripts\python.exe main.py
+```
+
+If you already activated your virtual environment, you can run:
+
+```bash
 python main.py
 ```
 
@@ -76,6 +102,24 @@ The preprocessing pipeline uses:
 - IQR-based capping for numeric outliers
 
 This keeps the workflow simple, reproducible, and appropriate for a Multiple Linear Regression model.
+
+## Folder Structure
+
+```text
+MultipleLinearRegressionModelEvaluation/
+├── README.md
+├── main.py
+├── data_loader.py
+├── eda.py
+├── preprocessing.py
+├── model.py
+├── data/
+│   └── 3304db2c078848f8ad85537da4d87645_car_(1).csv
+└── images/
+  ├── countplot_origin.png
+  ├── distplot_mpg.png
+  └── correlation_heatmap.png
+```
 
 ## Future Improvements
 
