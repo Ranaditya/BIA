@@ -1,7 +1,7 @@
 ---
 name: "ML Unsupervised Intake"
 description: "Intake and plan unsupervised ML work from CSV with approval-gated execution and documentation."
-argument-hint: "Dataset path, objective, preferred technique (clustering/PCA), deliverables"
+argument-hint: "Dataset path, objective, preferred technique (clustering/PCA), instruction set, deliverables"
 agent: "agent"
 ---
 Use the `ml-core-workflow` skill for this task.
@@ -12,6 +12,7 @@ Inputs:
 - Dataset path: ${input:dataset_path}
 - Objective (segmentation, anomaly detection, dimensionality reduction, etc.): ${input:objective}
 - Preferred technique (clustering, PCA, or auto): ${input:technique}
+- Optional instruction set (step-by-step rules from user): ${input:instruction_set}
 - Expected deliverables: ${input:deliverables}
 
 Execution requirements:

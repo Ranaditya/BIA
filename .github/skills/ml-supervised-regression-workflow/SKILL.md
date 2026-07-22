@@ -25,6 +25,8 @@ Use this skill to implement and document supervised regression projects.
 1. Dataset path
 2. Target column
 3. Feature columns (or instruction to infer candidates)
+4. Workflow type intent (must be regression)
+5. Instruction set (if provided by user)
 
 ## Optional Inputs with Defaults
 
@@ -62,6 +64,17 @@ Use this skill to implement and document supervised regression projects.
 3. Create a feature branch for new work.
 4. Keep workflow reproducible and easy to run.
 5. Validate by running the project with the selected environment.
+6. If the user instruction set implies classification (for example logistic regression with accuracy or precision/recall targets), pause and route to classification workflow.
+
+## Input Contract
+
+- dataset_path
+- workflow_type=regression
+- target_column
+- feature_columns
+- test_size (default 0.2)
+- random_state (default 42)
+- instruction_set (optional)
 
 ## Reporting Standard
 

@@ -35,6 +35,20 @@ Collect or confirm:
 2. Target column if supervised
 3. Technique intent (regression, classification, clustering, or unknown)
 4. Evaluation expectation and deliverables
+5. Instruction set (if user provides step-by-step constraints)
+
+## Normalized Input Contract
+
+Use this intake shape across ML prompts and tasks:
+
+- dataset_path
+- technique_intent
+- target_column (for supervised)
+- feature_columns (optional for supervised)
+- test_size (optional, default 0.2)
+- random_state (optional, default 42)
+- instruction_set (optional)
+- deliverables
 
 ## Execution Rules
 
@@ -66,7 +80,7 @@ For each ML task, include:
 ## Routing Guidance
 
 - If task is supervised regression, use ml-supervised-regression-workflow.
-- If task is supervised classification, route to a classification-focused skill when available.
+- If task is supervised classification, use ml-supervised-classification-workflow.
 - If task is unsupervised clustering or dimensionality reduction, route to unsupervised skill when available.
 - If ambiguous, ask one concise clarifying question and continue.
 

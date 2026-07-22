@@ -1,7 +1,7 @@
 ---
 name: "ML Core Workflow"
 description: "Plan and execute an ML project step by step with approvals, branching, and documentation."
-argument-hint: "Dataset path, technique intent (supervised/unsupervised), deliverables"
+argument-hint: "Dataset path, technique intent (supervised/unsupervised), instruction set, deliverables"
 agent: "agent"
 ---
 Use the `ml-core-workflow` skill for this task.
@@ -12,6 +12,7 @@ Inputs:
 - Dataset path: ${input:dataset_path}
 - Technique intent: ${input:technique_intent}
 - Target column (if supervised): ${input:target_column}
+- Optional instruction set (step-by-step rules from user): ${input:instruction_set}
 - Expected deliverables: ${input:deliverables}
 
 Execution requirements:
