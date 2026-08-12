@@ -59,7 +59,7 @@ MachineLearningIntroduction/
 ## Installation & Setup
 
 ### Prerequisites
-- Python 3.14+
+- Python 3.13
 - Virtual environment (`.venv-1`)
 
 ### Required Libraries
@@ -77,8 +77,9 @@ All libraries are listed in `requirements.txt` and pre-installed in the venv.
 
 ### Activate Virtual Environment
 ```powershell
-# PowerShell
+# From the repository root (PowerShell)
 .\.venv-1\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
 
 # Or use Python directly
 c:\Users\vaidi\BIA\.venv-1\Scripts\python.exe
