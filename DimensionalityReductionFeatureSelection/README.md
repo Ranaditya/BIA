@@ -37,7 +37,6 @@ DimensionalityReductionFeatureSelection/
 |-- preprocessing.py           # Split, scaling, PCA, and feature engineering
 |-- model.py                   # Random Forest training, metrics, model plots
 |-- main.py                    # Orchestrates all 12 requested steps
-|-- requirements.txt
 `-- README.md
 ```
 
@@ -47,7 +46,7 @@ From the BIA workspace:
 
 ```powershell
 .\.venv-1\Scripts\Activate.ps1
-pip install -r .\DimensionalityReductionFeatureSelection\requirements.txt
+python -m pip install -r requirements.txt
 ```
 
 ## Run the full pipeline

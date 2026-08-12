@@ -27,7 +27,7 @@ python main.py
 ## Getting Started
 
 ### Prerequisites
-- Python 3.14+
+- Python 3.13 (64-bit)
 - Git
 - GitHub account
 
@@ -65,17 +65,15 @@ python main.py
 git clone https://github.com/yourusername/BIA.git
 cd BIA
 
-# Navigate to a project
+# Create the single project-level virtual environment
+py -3.13 -m venv .venv-1
+.\.venv-1\Scripts\Activate.ps1
+
+# Install all repository dependencies
+python -m pip install -r requirements.txt
+
+# Navigate to and run a project
 cd MachineLearningIntroduction
-
-# (Optional) Create a virtual environment
-python -m venv venv
-venv\Scripts\Activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Run the project
 python main.py
 ```
 
@@ -121,7 +119,7 @@ Additional ML/data science projects will be added to this repository:
 - **Data Processing:** Pandas, NumPy
 - **Machine Learning:** Scikit-learn
 - **Visualization:** Matplotlib, Seaborn
-- **Environment:** Python 3.14+, Virtual Environment
+- **Environment:** Python 3.13, project-level `.venv-1`
 
 ---
 

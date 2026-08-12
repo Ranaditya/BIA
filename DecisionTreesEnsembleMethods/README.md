@@ -57,7 +57,7 @@ DecisionTreesEnsembleMethods/
 ## Installation & Setup
 
 ### Prerequisites
-- Python 3.14+
+- Python 3.13
 - Virtual environment: `.venv-1`
 
 ### Required Libraries
@@ -73,7 +73,9 @@ These libraries are available in the workspace environment used for the project.
 
 ### Activate Virtual Environment
 ```powershell
+# Run from the repository root
 .\.venv-1\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
 
 # Or run Python directly
 c:\Users\vaidi\BIA\.venv-1\Scripts\python.exe

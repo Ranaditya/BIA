@@ -17,7 +17,10 @@ stratified train/test split, and compares a linear Support Vector Machine with a
 ## Run
 
 ```powershell
+cd C:\Users\vaidi\BIA
+.\.venv-1\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
+cd SVM-KNN
 python main.py
 ```
 
