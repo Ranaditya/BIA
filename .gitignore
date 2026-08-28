@@ -41,6 +41,7 @@ env/
 
 # Data & Models
 *.csv
+*.txt
 *.pkl
 *.joblib
 *.h5
