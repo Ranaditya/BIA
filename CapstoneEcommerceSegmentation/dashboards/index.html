@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#153b32">
+  <meta name="description" content="Explore e-commerce customer behavior, RFM segments, clustering results, and model validation.">
+  <title>Commerce Signals | Customer Segmentation</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <div class="shell">
+    <aside class="rail" aria-label="Dashboard navigation">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">C</div>
+        <div class="brand-name">Commerce Signals<span class="brand-sub">Customer intelligence</span></div>
+      </div>
+      <div>
+        <p class="rail-label">Workspace</p>
+        <nav class="nav" aria-label="Dashboard views">
+          <button type="button" data-view="overview" aria-controls="view-overview" aria-current="page">Overview</button>
+          <button type="button" data-view="segments" aria-controls="view-segments">Segments</button>
+          <button type="button" data-view="model" aria-controls="view-model">Model review</button>
+          <button type="button" data-view="method" aria-controls="view-method">Method &amp; notes</button>
+        </nav>
+      </div>
+      <div class="rail-note">Retail transaction analysis<br>Historical window · 2010–2011</div>
+    </aside>
+
+    <main id="main-content">
+      <div class="topline">
+        <div class="crumb">Analytics / Customer segmentation</div>
+        <div class="top-actions">
+          <div class="status" id="run-status" role="status" aria-live="polite">Loading latest run...</div>
+          <button class="refresh-button" id="refresh-data" type="button" title="Reload current dashboard data">Refresh data</button>
+        </div>
+      </div>
+
+      <header class="intro">
+        <div>
+          <p class="eyebrow">E-commerce · RFM analysis</p>
+          <h1>Customer segments,<br>seen clearly.</h1>
+          <p class="intro-copy">A transaction-level view of customer value, purchasing cadence, and the structure of the current KMeans segments.</p>
+        </div>
+        <div class="run-chip" id="snapshot-chip">Historical snapshot · loading</div>
+      </header>
+
+      <section class="kpis" aria-label="Run summary">
+        <div class="kpi"><span class="kpi-label">Customers analyzed</span><strong class="kpi-value" id="kpi-customers">Loading</strong><span class="kpi-foot">Customer-level RFM records</span></div>
+        <div class="kpi"><span class="kpi-label">Transactions retained</span><strong class="kpi-value" id="kpi-clean-rows">Loading</strong><span class="kpi-foot">After sequential cleaning</span></div>
+        <div class="kpi"><span class="kpi-label">KMeans segments</span><strong class="kpi-value" id="kpi-clusters">Loading</strong><span class="kpi-foot">Silhouette score · <span id="kpi-silhouette">Loading</span></span></div>
+        <div class="kpi"><span class="kpi-label">Label model accuracy</span><strong class="kpi-value" id="kpi-accuracy">Loading</strong><span class="kpi-foot">Random Forest · stratified holdout</span></div>
+      </section>
+
+      <aside class="notice" role="note">
+        <span aria-hidden="true">!</span>
+        <div><strong>Read the model score in context.</strong> The classifier reproduces KMeans labels from the same RFM features. Its <span id="notice-accuracy">current holdout accuracy</span> is not evidence of future-purchase prediction or campaign lift.</div>
+      </aside>
+
+      <section id="view-overview" class="view-panel active" aria-labelledby="overview-title">
+        <div class="section-head">
+          <div><h2 id="overview-title">Trading pulse</h2><p class="section-sub">Where value, demand, and geography appear in the transaction history.</p></div>
+          <span class="chart-tag">2010—2011 history</span>
+        </div>
+        <div class="chart-grid">
+          <article class="chart wide">
+            <div class="chart-head"><h3 class="chart-title">Monthly sales</h3><label class="chart-tag" for="sales-metric">Measure <select id="sales-metric"><option value="revenue">Revenue (£)</option><option value="orders">Unique invoices</option></select></label></div>
+            <div id="sales-chart" class="interactive-chart" role="img" aria-label="Interactive monthly sales chart"></div>
+            <div class="chart-caption">The late-year peak is notable; a single annual cycle is not enough to establish a repeating seasonal pattern.</div>
+          </article>
+          <article class="chart">
+            <div class="chart-head"><h3 class="chart-title">Customer value distribution</h3><span class="chart-tag">GBP · customers</span></div>
+            <div id="spending-chart" class="interactive-chart" role="img" aria-label="Interactive histogram of customer monetary values"></div>
+            <div class="chart-caption">The distribution is strongly right-skewed. Use customer-level value and frequency together when prioritizing retention.</div>
+          </article>
+          <article class="chart">
+            <div class="chart-head"><h3 class="chart-title">Country concentration</h3><label class="chart-tag" for="country-metric">Measure <select id="country-metric"><option value="transactions">Transactions</option><option value="revenue">Revenue (£)</option></select></label></div>
+            <div id="country-chart" class="interactive-chart" role="img" aria-label="Interactive chart of country transaction counts or revenue"></div>
+            <div class="chart-caption">The United Kingdom dominates this transaction base; country should be treated as context, not an unexamined segmentation driver.</div>
+          </article>
+        </div>
+      </section>
+
+      <section id="view-segments" class="view-panel" aria-labelledby="segments-title">
+        <div class="section-head">
+          <div><h2 id="segments-title">Segment structure</h2><p class="section-sub">Cluster size and relative RFM patterns. Use the cluster IDs until profile labels are validated.</p></div>
+          <span class="chart-tag">KMeans · k = <span id="selected-k">Loading</span></span>
+        </div>
+        <div class="mix">
+          <div class="mix-panel">
+            <h3 class="mix-title">Customer mix</h3>
+            <p class="mix-copy">Share of <span id="mix-customers">current customer records</span> in the selected KMeans solution.</p>
+            <div id="cluster-mix" class="dynamic-mix"></div>
+          </div>
+          <div class="readout"><span class="readout-label">Top classifier feature</span><strong id="top-feature">Loading</strong><p>Highest Random Forest importance when reconstructing the KMeans cluster labels.</p></div>
+        </div>
+        <div class="chart-grid">
+          <article class="chart">
+            <div class="chart-head"><h3 class="chart-title">RFM cluster projection</h3><span class="chart-tag">Standardized z-score</span></div>
+            <label class="chart-tag" for="cluster-filter">View <select id="cluster-filter"><option value="all">All clusters</option></select></label>
+            <div id="cluster-chart" class="interactive-chart" role="img" aria-label="Interactive RFM cluster scatter plot"></div>
+            <div class="chart-caption">This two-axis projection shows Recency and Frequency only; Monetary is not represented in the scatter.</div>
+          </article>
+          <article class="chart">
+            <div class="chart-head"><h3 class="chart-title">Relative segment profiles</h3><span class="chart-tag">RFM · native units</span></div>
+            <label class="chart-tag" for="profile-metric">Metric <select id="profile-metric"><option value="Recency">Recency (days)</option><option value="Frequency">Frequency (invoices)</option><option value="Monetary">Monetary (£)</option></select></label>
+            <div id="profile-chart" class="interactive-chart" role="img" aria-label="Interactive segment profile chart"></div>
+            <div class="chart-caption">Profile labels in the source image may repeat because naming is heuristic. The quantitative cluster IDs and sizes above remain the dependable summary.</div>
+          </article>
+          <article class="chart">
+            <div class="chart-head"><h3 class="chart-title">RFM relationships</h3><span class="chart-tag">Correlation · unitless</span></div>
+            <div id="correlation-chart" class="interactive-chart heatmap-chart" role="img" aria-label="RFM correlation heatmap"></div>
+            <div class="chart-caption">Correlations describe linear association; they do not establish causation or customer intent.</div>
+          </article>
+          <article class="chart">
+            <div class="chart-head"><h3 class="chart-title">Top products by sales</h3><span class="chart-tag">GBP · total</span></div>
+            <div id="products-chart" class="interactive-chart" role="img" aria-label="Interactive top product revenue chart"></div>
+            <div class="chart-caption">Product totals help frame merchandising and inventory questions alongside customer-level segment behavior.</div>
+          </article>
+        </div>
+      </section>
+
+      <section id="view-model" class="view-panel" aria-labelledby="model-title">
+        <div class="section-head">
+          <div><h2 id="model-title">Model review</h2><p class="section-sub">How the cluster count was selected and how well the classifier recovers those labels.</p></div>
+          <span class="chart-tag">Evaluation</span>
+        </div>
+        <div class="chart-grid">
+          <article class="chart wide">
+            <div class="chart-head"><h3 class="chart-title">KMeans candidate scan</h3><span class="chart-tag">Inertia + silhouette</span></div>
+            <div class="dual-charts"><div id="inertia-chart" class="interactive-chart" role="img" aria-label="Interactive KMeans inertia chart"></div><div id="silhouette-chart" class="interactive-chart" role="img" aria-label="Interactive silhouette score chart"></div></div>
+            <div class="chart-caption">The run selected k = <span id="selected-k-caption">current value</span> by maximum silhouette score. Review stability and business usefulness as well as this metric.</div>
+          </article>
+          <article class="chart">
+            <div class="chart-head"><h3 class="chart-title">Cluster-label confusion matrix</h3><span class="chart-tag">Customer count</span></div>
+            <div id="confusion-chart" class="interactive-chart heatmap-chart" role="img" aria-label="Interactive confusion matrix"></div>
+            <div class="chart-caption">Few disagreements mean the Random Forest reproduces the cluster boundary; this is not a later-period purchase outcome.</div>
+          </article>
+          <div class="readout">
+            <span class="readout-label">Validation boundary</span>
+            <strong>Retrospective</strong>
+            <p>For a future-behavior model, define a prediction cutoff and outcome window, build predictors only from earlier transactions, and test on a later period.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-method" class="view-panel" aria-labelledby="method-title">
+        <div class="section-head">
+          <div><h2 id="method-title">Method &amp; interpretation</h2><p class="section-sub">How transaction lines become customer segments, and what conclusions the analysis supports.</p></div>
+          <span class="chart-tag">Analysis notes</span>
+        </div>
+        <div class="method-grid">
+          <article class="method-step"><span class="step-number">01</span><h3>Prepare transaction history</h3><p>Load dates as datetimes and customer IDs as nullable strings. Remove missing customer IDs, cancellation invoices, prices below £0.01, non-numeric stock codes, and exact duplicates. Calculate line value as quantity multiplied by unit price.</p></article>
+          <article class="method-step"><span class="step-number">02</span><h3>Aggregate customer behavior</h3><p>Build Recency in days from the latest purchase to the snapshot, Frequency from distinct invoice numbers, and Monetary from summed line values. Apply log1p and standard scaling before distance-based clustering.</p></article>
+          <article class="method-step"><span class="step-number">03</span><h3>Compare segment structures</h3><p>Scan KMeans cluster counts using inertia and silhouette, then compare KMeans, Ward hierarchical clustering, and DBSCAN. Consider profile clarity and stability in addition to a single separation score.</p></article>
+          <article class="method-step"><span class="step-number">04</span><h3>Validate the right question</h3><p>The Random Forest currently learns to reproduce KMeans labels from the same RFM inputs. Its holdout score is not future-purchase prediction. A forecast needs an explicit future outcome and a time-based holdout.</p></article>
+        </div>
+        <div class="method-grid method-detail-grid">
+          <article class="method-panel">
+            <h3>RFM definitions</h3>
+            <dl class="definition-list">
+              <div><dt>Recency</dt><dd>Elapsed days since the customer's latest invoice. Lower values mean more recent activity.</dd></div>
+              <div><dt>Frequency</dt><dd>Count of distinct invoices for the customer, not the number of item rows.</dd></div>
+              <div><dt>Monetary</dt><dd>Sum of transaction-line values, calculated as Quantity × UnitPrice.</dd></div>
+            </dl>
+          </article>
+          <article class="method-panel caution-panel">
+            <h3>Use results responsibly</h3>
+            <ul>
+              <li>The data covers a historical period; patterns may not describe current customers.</li>
+              <li>One year of monthly observations is not enough to establish recurring seasonality.</li>
+              <li>Heuristic segment names are summaries of profiles, not ground-truth customer types.</li>
+              <li>Test retention campaigns with a control group before attributing business impact.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <footer class="foot">
+        <span>Source: project run signature · scikit-learn <span id="footer-sklearn">current version</span> · historical transaction data</span>
+        <span>Generated charts: <a href="../outputs/figures/">outputs/figures</a></span>
+      </footer>
+    </main>
+  </div>
+  <script src="dashboard.js" defer></script>
+</body>
+</html>

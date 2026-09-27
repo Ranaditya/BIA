@@ -3,6 +3,7 @@
 import json
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 import sklearn
 
@@ -66,7 +67,8 @@ def main():
 	print(segment_profile.to_string(index=False))
 
 	model, X_test, y_test, metrics = train_segment_classifier(scaled, labels)
-	evaluation = evaluate_classifier(y_test, model.predict(X_test))
+	y_pred = model.predict(X_test)
+	evaluation = evaluate_classifier(y_test, y_pred)
 	print("Segment classifier metrics:")
 	print(f"Accuracy: {metrics['accuracy']:.3f}")
 	print(f"Precision: {metrics['precision']:.3f}")
@@ -76,7 +78,7 @@ def main():
 	print(pd.DataFrame(evaluation["classification_report"]).transpose().to_string())
 	print("Confusion matrix:")
 	print(evaluation["confusion_matrix"])
-	class_labels = sorted(set(y_test) | set(model.predict(X_test)))
+	class_labels = sorted(set(y_test) | set(y_pred))
 	plot_confusion_matrix(
 		evaluation["confusion_matrix"],
 		class_labels=class_labels,
@@ -109,6 +111,56 @@ def main():
 	with signature_path.open("w", encoding="utf-8") as file:
 		json.dump(signature, file, indent=2)
 	print(json.dumps(signature, indent=2))
+
+	monthly = clean.groupby(clean["InvoiceDate"].dt.to_period("M")).agg(
+		revenue=("TotalPrice", "sum"),
+		orders=("InvoiceNo", "nunique"),
+	)
+	country = clean.groupby("Country").agg(
+		transactions=("InvoiceNo", "size"),
+		revenue=("TotalPrice", "sum"),
+	).sort_values("transactions", ascending=False).head(15)
+	spend_counts, spend_edges = np.histogram(rfm["Monetary"], bins=30)
+	cluster_points = scaled.copy()
+	cluster_points["cluster"] = labels
+	cluster_points = cluster_points.sample(n=min(1200, len(cluster_points)), random_state=42)
+	confusion_labels = [str(label) for label in class_labels]
+	dashboard_data = {
+		"signature": signature,
+		"monthly": {
+			"labels": [str(period) for period in monthly.index],
+			"revenue": monthly["revenue"].tolist(),
+			"orders": monthly["orders"].tolist(),
+		},
+		"countries": {
+			"labels": country.index.tolist(),
+			"transactions": country["transactions"].tolist(),
+			"revenue": country["revenue"].tolist(),
+		},
+		"spending": {
+			"labels": [round(float((spend_edges[i] + spend_edges[i + 1]) / 2), 2) for i in range(len(spend_counts))],
+			"counts": spend_counts.tolist(),
+		},
+		"correlations": rfm[["Recency", "Frequency", "Monetary"]].corr().to_dict(),
+		"products": {
+			"labels": clean.groupby("Description")["TotalPrice"].sum().nlargest(15).index.tolist(),
+			"revenue": clean.groupby("Description")["TotalPrice"].sum().nlargest(15).tolist(),
+		},
+		"cluster_points": [
+			{"x": float(row.Recency), "y": float(row.Frequency), "cluster": int(row.cluster)}
+			for row in cluster_points.itertuples()
+		],
+		"segments": segment_profile.to_dict(orient="records"),
+		"k_selection": optimal_k.to_dict(orient="records"),
+		"confusion": {
+			"labels": confusion_labels,
+			"matrix": evaluation["confusion_matrix"].tolist(),
+		},
+	}
+	dashboard_data_path = Path(__file__).resolve().parent / "outputs" / "dashboard_data.json"
+	dashboard_data_path.parent.mkdir(parents=True, exist_ok=True)
+	with dashboard_data_path.open("w", encoding="utf-8") as file:
+		json.dump(dashboard_data, file, indent=2)
 
 	return scaled, scaler
 
