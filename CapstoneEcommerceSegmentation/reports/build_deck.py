@@ -162,12 +162,6 @@ def new_slide(layout, title=None):
 	return s
 
 
-def notes(slide, secs, text):
-	NOTES.append((slide, secs, text))
-
-
-NOTES = []
-
 # ---------- chart styling ----------
 
 def style_axes(chart, color=MUTED, grid=LINE, size=11, value_fmt=None, show_val_axis=True):
@@ -287,9 +281,6 @@ box(s_title, 1.0, 4.05, 11.33, 0.5, "RFM-Based Customer Segmentation for a UK On
 	size=22, color=WHITE, align=PP_ALIGN.CENTER)
 box(s_title, 1.0, 4.75, 11.33, 0.4, "Capstone Project  ·  [Presenter name]  ·  [Date]",
 	size=14, color=ON_NAVY_MUTED, align=PP_ALIGN.CENTER)
-notes(s_title, 20, "Open: 'Every retailer knows some customers matter more than others. The question is "
-	  "which ones, how many, and what to do about it.' Introduce yourself and the project in one line.\n"
-	  "Fill in [Presenter name] and [Date] before presenting.")
 
 # 2. Agenda (template slide 2)
 s_agenda = prs.slides[1]
@@ -310,8 +301,6 @@ for i, (num, head, sub) in enumerate(agenda):
 box(s_agenda, 0.74, 5.62, 11.8, 0.3,
 	"Backup: an appendix of anticipated methodology questions (FAQ 1–9) follows the close.",
 	size=12, color=MUTED, italic=True)
-notes(s_agenda, 20, "Five parts, about 11 minutes. Mention that detailed methodology answers are in an FAQ "
-	  "appendix, so the panel knows deeper questions are welcome.")
 
 # 3. Business problem
 s = new_slide(L_ONE_THIRD, "The business problem")
@@ -330,9 +319,6 @@ for i, (h, t) in enumerate(objs):
 	badge(s, 5.1, y, 0.55, str(i + 1), fill=BLUE, size=16)
 	box(s, 5.9, y - 0.02, 6.6, 0.35, h, size=16, color=NAVY, bold=True)
 	box(s, 5.9, y + 0.3, 6.6, 0.6, t, size=13, color=MUTED)
-notes(s, 50, "Frame the brief: an e-commerce company wants better marketing and retention by understanding "
-	  "purchasing patterns.\n• Four objectives map directly to the BIA brief: segment, explain, operationalise, act.\n"
-	  "• Stress that success is an actionable segmentation, not just a high metric.")
 
 # 4. Data & cleaning
 s = new_slide(L_TITLE_ONLY, "Data: one year of UK online retail transactions")
@@ -364,10 +350,6 @@ for i, v in enumerate([sig["raw_rows"]] + [st["remaining"] for st in steps]):
 box(s, 5.0, 5.55, 7.6, 0.4, f"{sig['raw_rows']:,} → {sig['clean_rows']:,} rows ({sig['clean_rows'] / sig['raw_rows'] * 100:.0f}% kept). "
 	f"The biggest cut, missing CustomerID ({steps[0]['removed']:,} rows), is unavoidable: RFM needs a customer.",
 	size=12, color=MUTED)
-notes(s, 45, f"• Public UCI Online Retail data: a UK gift retailer, Dec 2010 to Dec 2011.\n"
-	  f"• Five cleaning steps; the largest removes {steps[0]['removed']:,} rows with no CustomerID, since segmentation is per customer.\n"
-	  f"• Cancellations ({steps[1]['removed']:,}), non-product codes like postage and fees ({steps[3]['removed']:,}) and exact duplicates ({steps[4]['removed']:,}) removed.\n"
-	  f"• Result: {sig['clean_rows']:,} rows, {n_cust:,} customers. Step-by-step detail is FAQ 5.")
 
 # 5. EDA
 s = new_slide(L_TITLE_ONLY, "What the transactions tell us")
@@ -411,10 +393,6 @@ for i, (v, l1, l2) in enumerate(cards):
 	rect(s, 8.6, y, 4.0, 1.32, fill=ICE)
 	box(s, 8.85, y + 0.12, 3.6, 0.5, v, size=24, color=NAVY, bold=True)
 	box(s, 8.85, y + 0.62, 3.6, 0.65, [l1, [(l2, {"color": MUTED, "size": 12})]], size=12, color=INK)
-notes(s, 60, "• Clear seasonality: revenue rises from September and peaks in November, which fits gift buying before Christmas.\n"
-	  f"• Heavy UK concentration: about {uk_share:.0f}% of transactions.\n"
-	  "• Spend is extremely skewed: median £614, mean £1,853, max about £265k. That skew drives the log transform on the next slide.\n"
-	  "• Bridge: 'Rather than cluster raw transactions, we summarise each customer's behaviour.'")
 
 # 6. RFM feature engineering (chevron layout: navy on right)
 s = new_slide(L_CHEVRON, "RFM feature engineering")
@@ -438,10 +416,6 @@ box(s, 9.55, 3.2, 3.1, 2.3, [
 	"",
 	"Scaling puts R, F and M on equal footing for distance-based clustering."],
 	size=13, color=ON_NAVY_MUTED)
-notes(s, 50, "• RFM is the standard, interpretable summary of purchase behaviour, and exactly what the brief asks us to analyse.\n"
-	  "• Recency is days since last purchase against a snapshot one day after the last transaction.\n"
-	  "• K-means uses Euclidean distance, so a skewed Monetary with values up to £265k would dominate. log1p compresses the tail; StandardScaler equalises units.\n"
-	  "• Full rationale: FAQ 1.")
 
 # 7. Choosing k
 s = new_slide(L_TITLE_ONLY, "Choosing k: the silhouette favours two segments")
@@ -478,10 +452,6 @@ rect(s, 0.74, 5.45, 11.85, 0.55, fill=ICE)
 box(s, 0.95, 5.45, 11.5, 0.55, [[("k = 2 wins clearly: ", {"bold": True, "color": NAVY}),
 	(f"silhouette 0.43 vs 0.34 at k = 3. The elbow has no sharp bend, so the silhouette decides. "
 	 "k = 4 is a finer view (FAQ 3).", {})]], size=13, anchor=MSO_ANCHOR.MIDDLE)
-notes(s, 60, "• We tested k from 2 to 10 with K-means, n_init = 10, fixed seed.\n"
-	  "• The silhouette measures how well separated clusters are: k = 2 scores 0.43, a clear drop to 0.34 at k = 3, then a steady decline.\n"
-	  "• The elbow curve is smooth, which is typical of continuous behavioural data, so it isn't decisive on its own.\n"
-	  "• We chose the statistically best k rather than forcing a business-friendly number. FAQ 2 and 3 cover 'why only two?' and what k = 4 would look like.")
 
 # 8. Algorithm comparison
 s = new_slide(L_TITLE_ONLY, "Comparing algorithms: K-means separates best")
@@ -542,11 +512,6 @@ for r_i, row in enumerate(rows):
 				run.font.color.rgb = NAVY
 box(s, 6.4, 5.1, 6.2, 0.9, "K-means wins on both metrics at k = 2 and k = 4. It is also the only one of the three "
 	"that can assign a new customer without refitting.", size=13, color=MUTED)
-notes(s, 60, f"• The brief asks us to compare K-means, hierarchical and DBSCAN on the same scaled RFM features.\n"
-	  f"• Silhouette: K-means {cmp2['KMeans']['silhouette']:.3f}, Ward hierarchical {cmp2['Hierarchical']['silhouette']:.3f}, DBSCAN {cmp2['DBSCAN']['silhouette']:.3f} (on non-noise points).\n"
-	  f"• Davies-Bouldin agrees: K-means {cmp2['KMeans']['davies_bouldin']:.2f} is lowest.\n"
-	  f"• DBSCAN (eps 0.5, min_samples 5) finds one dense blob, a small group and {cmp2['DBSCAN']['noise_points']} noise points. Customer behaviour is a continuum, not dense islands.\n"
-	  "• Practical tie-breaker: K-means has a predict step for new customers. Details are in FAQ 4.")
 
 # 9. Segments + Pareto (Half & Half: navy right half)
 s = new_slide(L_HALF, "Two segments, very unequal value")
@@ -589,11 +554,6 @@ box(s, 6.95, 1.1, 5.4, 0.6, f"{hva_share:.0f}% of customers → {hva['RevenuePct
 	size=22, color=WHITE, bold=True)
 box(s, 10.45, 2.3, 1.6, 2.6, [[("■ ", {"color": RGBColor(0x4F, 0xB3, 0xFF)}), ("High-Value Active", {})], "",
 	[("■ ", {"color": RGBColor(0x8C, 0x93, 0xB8)}), ("Low-Value Lapsing", {})]], size=12, color=WHITE)
-notes(s, 70, f"• High-Value Active: {hva['Size']:,} customers who bought about {hva['Recency']:.0f} days ago, place about {hva['Frequency']:.0f} orders, spend about {gbp(hva['Monetary'])}.\n"
-	  f"• Low-Value Lapsing: {lvl['Size']:,} customers, last seen about {lvl['Recency']:.0f} days ago, 1–2 orders, about {gbp(lvl['Monetary'])}.\n"
-	  f"• The headline: {hva_share:.0f}% of customers generate {hva['RevenuePct']:.0f}% of revenue ({gbp(hva_rev)} of {gbp(total_rev)}).\n"
-	  "• Names come from each cluster's centroid in scaled RFM space (value tier + activity status), not chosen by hand.\n"
-	  f"• Stable: re-running across seeds and 80% bootstrap samples gives ARI ≈ {stab['bootstrap_ari_mean']:.2f} (FAQ 8).")
 
 # 10. What drives the segments
 s = new_slide(L_TITLE_ONLY, "What drives the segments? Frequency first")
@@ -630,11 +590,6 @@ for i, (h, t) in enumerate([
 	rect(s, x, 5.0, 3.8, 1.0, fill=ICE)
 	box(s, x + 0.2, 5.08, 3.4, 0.3, h, size=13, color=NAVY, bold=True)
 	box(s, x + 0.2, 5.4, 3.45, 0.6, t, size=12, color=MUTED)
-notes(s, 45, "• The brief asks which attributes drive segmentation. Two independent views:\n"
-	  f"  – Centroid gap: how far apart the two segment centres are on each scaled feature (F {gap['Frequency']:.2f}, M {gap['Monetary']:.2f}, R {gap['Recency']:.2f}).\n"
-	  f"  – Random Forest impurity importance: F {fi['Frequency']:.0%}, M {fi['Monetary']:.0%}, R {fi['Recency']:.0%}.\n"
-	  "• Both rank Frequency first. Business translation: repeat purchasing is the dividing line.\n"
-	  "• Caveat if asked: importance explains the labels, not causation.")
 
 # 11. Scoring new customers (right navy panel)
 s = new_slide(L_ONE_THIRD_R, "Scoring new customers into segments")
@@ -674,11 +629,6 @@ box(s, 9.2, 2.75, 3.3, 0.7, f"{correct} of {test_n} held-out customers placed in
 box(s, 9.2, 3.75, 3.3, 0.35, "READ WITH CARE", size=11, color=RGBColor(0xFF, 0xB4, 0x9C), bold=True)
 box(s, 9.2, 4.1, 3.3, 1.7, "Labels were built from the same RFM features: this measures "
 	"reproducibility, not future purchases (FAQ 6, 7).", size=13, color=WHITE)
-notes(s, 55, "• Operational question: once segments exist, how do we assign tomorrow's customers?\n"
-	  "• A 200-tree Random Forest learns the segment boundary; stratified 80/20 split.\n"
-	  f"• {acc * 100:.1f}% agreement: {test_n - correct} of {test_n} misplaced, all near the boundary.\n"
-	  "• Say this before the panel does: the target comes from K-means on the same features, so a high score is expected. It shows the rule is learnable and consistent. It is not evidence we can predict future purchasing. That needs a time-split design (FAQ 7).\n"
-	  "• (Accuracy varies slightly between runs, 99.4–99.7%.)")
 
 # 12. Recommendations
 s = new_slide(L_TITLE_ONLY, "Recommendations: protect the 39% first")
@@ -715,10 +665,6 @@ box(s, 0.74, 5.12, 11.85, 0.85, [
 	[(f"Illustrative sizing from segment averages: at-risk = 5% × {hva['Size']:,} × {gbp(hva['Monetary'])}; "
 	  f"upside = 10% × {lvl['Size']:,} × £{lvl_aov:.0f} average order (£{lvl['Monetary']:.0f} ÷ {lvl['Frequency']:.2f} orders).",
 	  {"size": 11, "color": MUTED, "italic": True})]], size=13)
-notes(s, 75, "• The asymmetry is the recommendation: losing just 5% of the top segment costs about 5× more than a good win-back campaign gains.\n"
-	  "• So priority 1 is retention of High-Value Active: loyalty benefits, a recency trigger at about 60 days (their average recency is 26), and pre-Q4 cross-sell.\n"
-	  "• Priority 2 is low-cost automated win-back for the lapsing group, with the goal of earning the second order, because Frequency is the key driver.\n"
-	  "• These figures are illustrative, built from segment averages, with assumptions on the slide. Every action should be A/B-tested against a control group.")
 
 # 13. Dashboard
 s = new_slide(L_TITLE_ONLY, "Interactive dashboard deliverable")
@@ -737,10 +683,6 @@ for i, (h, t) in enumerate(views):
 	box(s, px + 0.65, y + 0.34, 12.6 - px - 0.65, 0.55, t, size=12, color=MUTED)
 box(s, px, 5.4, 12.6 - px, 0.55, "Reads the pipeline's JSON output: re-run main.py and refresh.", size=12,
 	color=MUTED, italic=True)
-notes(s, 35, "• This is the interactive deliverable from the brief: dashboards/index.html, served locally.\n"
-	  "• It reads outputs/dashboard_data.json, so it always reflects the latest pipeline run.\n"
-	  "• It has four views. The warning banner about label accuracy appears on the dashboard itself as well.\n"
-	  "• Offer a live demo in Q&A if time allows.")
 
 # 14. Limitations & next steps
 s = new_slide(L_TITLE_ONLY, "Limitations and next steps")
@@ -764,21 +706,15 @@ arr.line.fill.background()
 rect(s, 7.05, 1.55, 5.55, 4.4, fill=NAVY)
 box(s, 7.3, 1.75, 5.0, 0.4, "Next steps", size=18, color=WHITE, bold=True)
 bullets(s, 7.3, 2.3, 5.05, 3.5, nxt, size=16, gap=10, color=WHITE, bullet_color=SKY)
-notes(s, 45, "• Be upfront: this is a descriptive segmentation, and the classifier is a scoring tool, not a forecast.\n"
-	  "• The most valuable next step is the time-split repurchase model, which answers 'predict future purchasing' in the brief properly.\n"
-	  "• Close the main talk: 'Our key message: 39% of customers drive 85% of revenue, so protecting them is worth far more than chasing the rest.'")
 
 # 15/16: Questions + Thank You are template slides 7 and 8 (kept as-is)
 s_q, s_ty = prs.slides[6], prs.slides[7]
-notes(s_q, 0, "Invite questions. The FAQ index follows Thank You: click any card to jump to the answer; each FAQ slide links back.")
-notes(s_ty, 0, "Thank the panel.")
 
 # 17. Appendix divider
 s_app = new_slide(L_SECTION, "Appendix: anticipated questions")
 for ph in s_app.shapes:
 	pass
 box(s_app, 0.8, 5.05, 11.5, 0.5, "Backup slides for methodology deep-dives · FAQ 1–9", size=16, color=MUTED)
-notes(s_app, 0, "Appendix divider. Only enter if asked.")
 
 # 18. FAQ index
 s_idx = new_slide(L_TITLE_ONLY, "FAQ index")
@@ -801,7 +737,6 @@ for i, q in enumerate(faq_titles):
 	b = badge(s_idx, x + 0.2, y + 0.35, 0.55, str(i + 1), fill=NAVY, size=15)
 	t = box(s_idx, x + 0.95, y + 0.1, 2.7, 1.05, q, size=13, color=NAVY, bold=True, anchor=MSO_ANCHOR.MIDDLE)
 	idx_cards.append((card, b, t))
-notes(s_idx, 0, "Click a card to jump to that FAQ.")
 
 faq_slides = []
 
@@ -847,8 +782,6 @@ bullets(s, 9.45, 1.85, 3.15, 3.9, [
 	[("log1p ", {"bold": True}), ("compresses the long tail (max spend £265k vs median £614); log1p is safe at 0.", {})],
 	[("StandardScaler ", {"bold": True}), ("gives R, F and M mean 0 and SD 1, so each feature weighs equally.", {})],
 	[("Order matters: ", {"bold": True}), ("scaling first would keep the skew.", {})]], size=13, gap=8)
-notes(s, 0, "30-second answer: Distance-based clustering is sensitive to scale and outliers. Monetary has skewness above 20. log1p makes the distributions close to symmetric, and StandardScaler puts the three features in equal units, so no single feature dominates the distance.\n"
-	  "Likely follow-up: 'Why not RobustScaler or remove outliers?' The log already tames outliers without discarding the wholesale buyers, who are the most valuable customers; removing them would hide the segment we care about most. RobustScaler would be a reasonable sensitivity check.")
 
 # FAQ 2
 s = faq(2, "Why only two segments?")
@@ -883,8 +816,6 @@ bullets(s, 9.75, 1.85, 2.85, 4.0, [
 	"Elbow is smooth, so it doesn't pick a k",
 	f"Seed and bootstrap ARI ≈ {stab['bootstrap_ari_mean']:.2f}",
 	"Behaviour is a continuum; finer cuts slice the same gradient (see k = 4, FAQ 3)"], size=13, gap=8)
-notes(s, 0, "30-second answer: We tested k = 2 to 10. The silhouette peaks clearly at k = 2 (0.43 vs 0.34), and the partition is almost identical across seeds and bootstrap samples. We didn't want to overrule the metric for a nicer story. If the business needs finer targeting, k = 4 is a valid sub-segmentation (next slide).\n"
-	  "Likely follow-up: 'Isn't a higher silhouette at k = 2 always expected?' Often yes, which is why we also checked Davies-Bouldin (0.89 at k = 2 vs 1.02 at k = 4) and stability, and present k = 4 as the operational alternative.")
 
 # FAQ 3
 s = faq(3, "What would k = 4 look like?")
@@ -919,8 +850,6 @@ for r_i, row in enumerate(rows):
 bullets(s, 4.9, 4.7, 7.7, 1.3, [
 	"All 709 top customers sit inside High-Value Active (k = 2), and all 1,571 lapsed customers inside Low-Value Lapsing",
 	"The two Mid-Value groups straddle the k = 2 line: Cooling is the retention watch-list; Active are recent buyers to convert to a second order"], size=13, gap=6)
-notes(s, 0, "30-second answer: At k = 4 we get High-Value Active (709 customers, about 65% of revenue), Mid-Value Cooling (1,179, 24%), Mid-Value Active (855, recent but only about 2 orders) and Low-Value Lapsing (1,571). The top and bottom groups sit entirely inside the k = 2 segments; the two mid groups straddle the k = 2 boundary, which confirms behaviour is a gradient. The silhouette is lower, but k = 4 is more actionable, especially the Cooling group as a churn watch-list.\n"
-	  "Likely follow-up: 'Then why not present k = 4 as the main result?' Because the evidence favours k = 2; we show k = 4 as a business refinement, not the statistical optimum.")
 
 # FAQ 4
 s = faq(4, "Why did DBSCAN and hierarchical do worse?")
@@ -956,8 +885,6 @@ bullets(s, 4.9, 4.2, 3.7, 1.8, [
 bullets(s, 8.85, 4.2, 3.75, 1.8, [
 	[("Ward hierarchical ", {"bold": True}), ("is close at k = 2 but merges greedily and can't undo early merges; it also has no predict step.", {})]],
 	size=13)
-notes(s, 0, "30-second answer: All three ran on the same scaled features. K-means has the best silhouette and Davies-Bouldin at both k = 2 and k = 4. DBSCAN needs clearly separated dense regions; RFM behaviour is a gradient, so it labels most customers as one cluster and some as noise. Ward is a reasonable second but greedy, O(n²) memory, and can't score new customers.\n"
-	  "Likely follow-up: 'Did you tune DBSCAN?' We used the standard defaults; a k-distance plot to choose eps is the right next step, but with a continuous cloud tuning mostly trades noise for one giant cluster. Also possible: 'Why not a Gaussian mixture model?' That's a good extension for soft membership, and is listed as a next step.")
 
 # FAQ 5
 s = faq(5, "What did cleaning remove, step by step?")
@@ -965,7 +892,7 @@ answer(s, f"Five rule-based steps took {sig['raw_rows']:,} rows to {sig['clean_r
 reasons = ["RFM is per customer; anonymous rows can't be attributed",
 		   "Invoices starting 'C' are returns, not purchases",
 		   "Prices below £0.01 are adjustments or errors",
-		   "Postage, fees, manual and bank-charge codes aren't products",
+		   "Drops service codes (POST, BANK CHARGES) but also lettered variants like 85123A",
 		   "Exact repeats would double-count spend"]
 rows = [["Step", "Rows removed", "Remaining", "Why"]]
 for st, why in zip(steps, reasons):
@@ -993,8 +920,6 @@ for r_i, row in enumerate(rows):
 			run.font.bold = c_i == 0
 box(s, 4.9, 5.45, 7.7, 0.5, "Every step prints its count at run time and is saved to outputs/analysis_results.json.",
 	size=12, color=MUTED, italic=True)
-notes(s, 0, "30-second answer: The biggest step is missing CustomerID, about a quarter of rows, which is unavoidable for customer-level RFM. Then cancellations, invalid prices, non-product stock codes and exact duplicates. All rules are transparent and logged.\n"
-	  "Likely follow-up: 'Doesn't dropping cancellations overstate spend?' Slightly. Netting returns against original purchases would be more exact; cancellations were about 2% of rows. 'Why keep only numeric StockCodes?' Non-numeric codes were service lines like POST, M, D and BANK CHARGES. Note this rule also drops a few lettered product variants, a known trade-off.")
 
 # FAQ 6
 s = faq(6, "Isn't 99% accuracy a sign of leakage?")
@@ -1010,8 +935,6 @@ for i, (h, t, col) in enumerate([
 	rect(s, 4.9, y, 7.7, 1.2, fill=ICE)
 	box(s, 5.15, y + 0.12, 7.2, 0.35, h, size=15, color=col, bold=True)
 	box(s, 5.15, y + 0.47, 7.25, 0.7, t, size=13, color=INK)
-notes(s, 0, "30-second answer: Yes, it's circular, and that's intentional. The labels come from K-means on the same features, so near-perfect accuracy is expected. We present it as a deployable scoring rule, not as predictive power. We did split train/test with stratification, so it isn't memorisation, but the task is easy by construction.\n"
-	  "Likely follow-up: 'Then why train a classifier at all?' K-means' own predict could assign new customers too; the Random Forest adds feature-importance explanations and makes it easy to add non-RFM features later. The honest predictive version is FAQ 7.")
 
 # FAQ 7
 s = faq(7, "How would you build a true future-purchase model?")
@@ -1032,8 +955,6 @@ bullets(s, 4.9, 3.85, 7.7, 2.1, [
 	[("Validate forward in time: ", {"bold": True}), ("train on one cutoff, test on a later one; never shuffle across time.", {})],
 	[("Metrics: ", {"bold": True}), ("ROC-AUC, precision-recall AUC, and lift in the top decile, compared against a simple 'most recent buyers' baseline.", {})],
 	[("Use: ", {"bold": True}), ("rank customers by repurchase probability to target retention spend.", {})]], size=13, gap=6)
-notes(s, 0, "30-second answer: Choose a cutoff date. Build RFM and other features only from transactions before it. Label each customer by whether they buy in the next 90 days. Train on one cutoff and evaluate on a later one, comparing against a simple recency baseline. That turns this project's segmentation into a genuine forecast and answers 'predict future purchasing' properly.\n"
-	  "Likely follow-up: 'Why not already done?' The dataset covers only about 12 months with a strong Q4 season, so one clean train/test pair is tight. We prioritised a sound segmentation first. It's the top next step.")
 
 # FAQ 8
 s = faq(8, "How stable are the clusters?")
@@ -1063,8 +984,6 @@ bullets(s, 9.75, 1.85, 2.85, 4.0, [
 	"Seed test uses a single initialisation, a harder test than production (n_init = 10)",
 	"Bootstrap compares labels on the sampled customers only",
 	f"Worst case across 40 refits: {min(stab['seed_ari_min'], stab['bootstrap_ari_min']):.3f}"], size=13, gap=8)
-notes(s, 0, f"30-second answer: We refit K-means 20 times with different random seeds (single initialisation each) and 20 times on random 80% subsamples, and compared against the full-data labels with the adjusted Rand index. Means are {stab['seed_ari_mean']:.3f} and {stab['bootstrap_ari_mean']:.3f}; the worst case is above 0.97. So the segments are a real structure, not an artefact of initialisation or sample.\n"
-	  "Likely follow-up: 'Is k = 4 as stable?' Not measured here; it would be the first check before adopting k = 4 operationally.")
 
 # FAQ 9
 s = faq(9, "Why only RFM, not product or country features?")
@@ -1093,8 +1012,6 @@ bullets(s, 9.35, 1.85, 3.25, 4.1, [
 	"More features make distances less meaningful and segments harder to name",
 	"Country is ~89% UK: little variation to segment on",
 	"Next: category mix, basket size, tenure, return rate, possibly with PCA"], size=13, gap=8)
-notes(s, 0, "30-second answer: The brief specifically asks about recency, frequency and monetary value. RFM is available for every customer and easy for marketing to act on. Correlations are moderate, so each adds information. Adding many features would dilute distance-based clustering and make segments harder to explain. Product-mix and basket features are our first extension.\n"
-	  "Likely follow-up: 'Would PCA help?' With three features, no; with a richer feature set, PCA or feature selection before clustering would be sensible.")
 
 # ---------- index hyperlinks ----------
 for shapes, fs in zip(idx_cards, faq_slides):
@@ -1116,12 +1033,292 @@ for sid in list(sldIdLst):
 for sid in [title_, agenda_] + main + [q_, ty_] + tail:
 	sldIdLst.append(sid)
 
-# ---------- speaker notes with timing ----------
-order = {id(s._element): i for i, s in enumerate(prs.slides)}
+# ---------- presenter notes (final slide order) ----------
+# Main talk: verbatim opening, numeric talking points, verbatim transition.
+# FAQs: one-line answer, 30-second explanation, follow-up, and what not to claim.
+
+
+def talk(opening, points, transition=None):
+	lines = [f"OPEN: “{opening}”"] + [f"• {p}" for p in points]
+	if transition:
+		lines.append(f"NEXT: “{transition}”")
+	return "\n".join(lines)
+
+
+def faq_note(one_line, explain, follow_ups, dont=None):
+	lines = [f"1 · ONE-LINE ANSWER (say first): “{one_line}”", "", f"2 · IF THEY WANT MORE (~30s): {explain}", "",
+			 "3 · IF THEY PUSH FURTHER:"]
+	lines += [f"• Q: {q}\n   A: “{a}”" for q, a in follow_ups]
+	if dont:
+		lines += ["", f"DON'T SAY: {dont}"]
+	return "\n".join(lines)
+
+
+slide_no = {id(s._element): i + 1 for i, s in enumerate(prs.slides)}
+faq_no = {n: slide_no[id(fs._element)] for n, fs in enumerate(faq_slides, 1)}
+idx_no = slide_no[id(s_idx._element)]
+q_no = slide_no[id(s_q._element)]
+lost = test_n - correct
+
+SCRIPT = [
+	# 1 Title
+	(15, talk("Good [morning/afternoon]. I'm [name], and my capstone asks one question: who actually drives the "
+			  "revenue in an online retail business?",
+			  ["Fill in [Presenter name] and [Date] on the slide before presenting."],
+			  "Here's how the next ten minutes are organised.")),
+	# 2 Agenda
+	(20, talk("I'll move through five parts, from the business problem to what the business should do next.",
+			  ["Problem & data → customer behaviour → building segments → segments & drivers → acting on it.",
+			   "Methodology deep dives are in an FAQ appendix after the close; invite the panel to use it in Q&A."],
+			  "Let me start with the problem.")),
+	# 3 Business problem
+	(40, talk("An e-commerce company wants to spend its marketing and retention budget where it matters, but it "
+			  "doesn't yet know which customers matter.",
+			  ["Four objectives straight from the brief: segment, explain, operationalise, act.",
+			   "Segment means comparing K-means, hierarchical clustering and DBSCAN on purchasing behaviour.",
+			   "Success is an actionable segmentation, not just a high metric."],
+			  "To answer that, I needed clean, customer-level data.")),
+	# 4 Data
+	(35, talk("I used the public UCI Online Retail dataset: one year of transactions from a UK gift retailer.",
+			  [f"{sig['raw_rows']:,} rows → {sig['clean_rows']:,} after five cleaning rules; {n_cust:,} customers.",
+			   f"Biggest cut: {steps[0]['removed']:,} rows with no CustomerID, unavoidable for customer-level analysis.",
+			   f"Step-by-step detail is FAQ 5 (slide {faq_no[5]})."],
+			  "Before modelling, I looked at what the transactions tell us.")),
+	# 5 EDA
+	(45, talk("Three patterns shaped everything that followed.",
+			  [f"Seasonality: revenue climbs from September to a {gbp(months['revenue'][peak_i])} peak in November: gift buying.",
+			   f"Concentration: about {uk_share:.0f}% of transactions ({uk_rev_share:.0f}% of revenue) are from the UK.",
+			   "Skew: the median customer spends £614, the mean is £1,853, the largest about £265k.",
+			   "If asked: December 2011 is low only because the data stops on 9 December."],
+			  "That skew is exactly why I didn't cluster the raw numbers.")),
+	# 6 RFM
+	(40, talk("I summarised each customer with three behavioural features: Recency, Frequency and Monetary value.",
+			  ["Medians: 51 days since last purchase, 2 orders, £614 spend.",
+			   "log1p then StandardScaler: Monetary skewness falls from 20.4 to 0.4, so no single feature or big "
+			   "spender dominates the distance.",
+			   f"Why this order: FAQ 1 (slide {faq_no[1]})."],
+			  "With comparable features, the next question was how many segments.")),
+	# 7 Choosing k
+	(55, talk("I let the data choose the number of segments rather than picking one that sounded good.",
+			  ["K-means for k = 2 to 10, n_init 10, fixed seed.",
+			   "Silhouette peaks at k = 2 with 0.43, then drops to 0.34 at k = 3 and keeps declining.",
+			   "The elbow curve is smooth with no sharp bend, so the silhouette decides.",
+			   f"I keep k = 4 as a finer operational view: FAQ 3 (slide {faq_no[3]})."],
+			  "Next, I checked whether K-means was the right algorithm at all.")),
+	# 8 Algorithm comparison
+	(55, talk("The brief asked me to compare three families of clustering, so I ran all three on the same features.",
+			  [f"Silhouette: K-means {cmp2['KMeans']['silhouette']:.3f}, Ward hierarchical {cmp2['Hierarchical']['silhouette']:.3f}, "
+			   f"DBSCAN {cmp2['DBSCAN']['silhouette']:.3f}.",
+			   f"Davies-Bouldin agrees: K-means is lowest at {cmp2['KMeans']['davies_bouldin']:.2f}.",
+			   f"DBSCAN finds one dominant dense region plus {cmp2['DBSCAN']['noise_points']} noise points: behaviour is a "
+			   "continuum, not separate islands.",
+			   "Practical tie-breaker: only K-means can score a new customer without refitting."],
+			  "So what do the two K-means segments actually look like?")),
+	# 9 Segments
+	(70, talk("Two segments, and they are very unequal.",
+			  [f"High-Value Active: {hva['Size']:,} customers, last order about {hva['Recency']:.0f} days ago, about "
+			   f"{hva['Frequency']:.0f} orders, about {gbp(hva['Monetary'])} each.",
+			   f"Low-Value Lapsing: {lvl['Size']:,} customers, about {lvl['Recency']:.0f} days since last order, 1–2 orders, "
+			   f"about {gbp(lvl['Monetary'])}.",
+			   f"Headline: {hva_share:.0f}% of customers generate {hva['RevenuePct']:.0f}% of revenue, "
+			   f"{gbp(hva_rev)} of {gbp(total_rev)}. Pause here.",
+			   f"Names come from each cluster's centroid (value tier + activity status), not chosen by hand; "
+			   f"the split is stable, ARI ≈ {stab['bootstrap_ari_mean']:.2f} (FAQ 8)."],
+			  "The natural follow-up is: what separates these two groups?")),
+	# 10 Drivers
+	(45, talk("I looked at that from two independent angles, and they agree.",
+			  [f"Centroid gap in standard units: Frequency {gap['Frequency']:.2f}, Monetary {gap['Monetary']:.2f}, "
+			   f"Recency {gap['Recency']:.2f}.",
+			   f"Random Forest importance: Frequency {fi['Frequency']:.0%}, Monetary {fi['Monetary']:.0%}, "
+			   f"Recency {fi['Recency']:.0%}.",
+			   "Business translation: earning the second and third order is the lever that moves a customer up."],
+			  "That Random Forest also solves a practical problem: scoring new customers.")),
+	# 11 Scoring
+	(50, talk("Once segments exist, the business needs to assign tomorrow's customers to them.",
+			  [f"200-tree Random Forest, stratified 80/20 split: {correct} of {test_n} held-out customers match K-means, "
+			   f"{acc * 100:.1f}%.",
+			   "Say this before the panel does: the labels came from K-means on the same features, so this measures "
+			   f"reproducibility, not future purchases (FAQ 6, 7 on slides {faq_no[6]}–{faq_no[7]}).",
+			   "If asked: accuracy varies slightly between runs, 99.4–99.7%."],
+			  "So how should the business act on these segments?")),
+	# 12 Recommendations
+	(70, talk(f"My core recommendation: the business should protect the {hva_share:.0f}% before chasing the {lvl_share:.0f}%.",
+			  [f"Risk: losing just 5% of High-Value Active, about {risk_n:.0f} customers, puts about {gbp(risk_loss, k=True)} at risk.",
+			   f"Upside: winning back 10% of Lapsing, about {winback_n} customers, for one more order adds about "
+			   f"{gbp(winback_gain, k=True)}.",
+			   "Actions: a loyalty tier and a ~60-day no-order trigger for the top segment; low-cost automated "
+			   "win-back for the rest.",
+			   "These are illustrative sizes from segment averages; every action should be A/B-tested against a "
+			   "control group."],
+			  "All of this is available to the business in an interactive dashboard.")),
+	# 13 Dashboard
+	(25, talk("The dashboard is the interactive deliverable from the brief.",
+			  ["Four views: Overview, Segments, Model review, Method & notes. It reads the pipeline's JSON, so a "
+			   "rerun refreshes it.",
+			   "OPTIONAL LIVE DEMO (~60s): only if the clock shows 8:30 or less on arriving here.",
+			   "   Before the talk: from CapstoneEcommerceSegmentation run  python -m http.server 8000  and open "
+			   "http://localhost:8000/dashboards/index.html in a browser tab.",
+			   "   Click path: Overview KPIs → Segments → Model review (confusion matrix) → back to the slides.",
+			   "   If anything fails: “I'll leave you with the screenshot” and move on."],
+			  "Finally, what this work doesn't do yet, and what I'd do next.")),
+	# 14 Limitations
+	(35, talk("I want to be clear about the limits of this work.",
+			  ["Retrospective; coarse at k = 2; circular classifier target; one UK-heavy year; RFM only.",
+			   f"The most valuable next step is a time-split repurchase model: FAQ 7 (slide {faq_no[7]}).",
+			   f"CLOSE, word for word: “To sum up: {hva_share:.0f}% of customers drive {hva['RevenuePct']:.0f}% of revenue, "
+			   "so protecting them is worth far more than chasing the rest. Thank you. I'm happy to take questions.”"])),
+	# 15 Questions ?
+	(0, "\n".join([
+		"Q&A HABITS",
+		"1. Repeat or rephrase the question so the whole panel hears it.",
+		"2. Give the one-sentence answer first; stop and let them ask for more.",
+		"3. Offer evidence: “I have a backup slide on that. Shall I show it?”",
+		f"4. Jump by typing the slide number and pressing Enter; come back with {q_no} + Enter.",
+		"",
+		"ROUTING CHEAT SHEET (question → slide)",
+		f"• Why log / why scale / why these features? → FAQ 1 · slide {faq_no[1]}",
+		f"• Why only 2 segments? Isn't that too few? → FAQ 2 · slide {faq_no[2]}, then FAQ 3 · slide {faq_no[3]}",
+		f"• Why K-means? Why not DBSCAN, hierarchical or GMM? → slide 8, then FAQ 4 · slide {faq_no[4]}",
+		f"• How did you clean the data? What about returns? → FAQ 5 · slide {faq_no[5]}",
+		f"• 99% accuracy: leakage? overfitting? → FAQ 6 · slide {faq_no[6]}",
+		f"• Can you predict churn or future purchases? → FAQ 7 · slide {faq_no[7]}",
+		f"• Are the clusters stable or reproducible? → FAQ 8 · slide {faq_no[8]}",
+		f"• Why not product / country features? PCA? → FAQ 9 · slide {faq_no[9]}",
+		"• How were the £340k / £72k figures calculated? → slide 12 footnote",
+		"• How were the segment names decided? → slide 9: centroid value tier + activity status",
+		"• Can we see the dashboard? → live demo, or slide 13",
+		"",
+		"UNPREPARED QUESTION FALLBACK",
+		"“That's a good question I haven't tested directly. My expectation is …, and the way I'd check it is ….” "
+		"Never guess a number."])),
+	# 16 Thank You!
+	(0, "IF ASKED TO SUM UP (~20s, word for word):\n"
+		f"“Using RFM features and K-means, I found two stable customer segments. {hva_share:.0f}% of customers generate "
+		f"{hva['RevenuePct']:.0f}% of revenue, so the business case says: protect that group first, win back the rest "
+		"cheaply, and test every action against a control group.”"),
+	# 17 Appendix divider
+	(0, f"Only enter the appendix when asked. Go straight to the relevant FAQ by typing its slide number + Enter; "
+		f"the FAQ index is slide {idx_no}."),
+	# 18 FAQ index
+	(0, "NAVIGATION\n"
+		"• Click a card to jump to that FAQ.\n"
+		f"• On any FAQ slide, click “↩ FAQ index” (bottom left of the navy panel), or type {idx_no} + Enter.\n"
+		f"• FAQ n is slide n + {faq_no[1] - 1}  (FAQ 1 = slide {faq_no[1]}, FAQ 9 = slide {faq_no[9]}).\n"
+		f"• Back to the Questions slide: {q_no} + Enter."),
+	# FAQ 1
+	(0, faq_note(
+		"Because K-means uses distance, and without the log and scaling a handful of big spenders and the pound "
+		"scale would decide the clusters.",
+		"Raw skewness is 20.4 for Monetary and 11.8 for Frequency; after log1p it's 0.4 and 1.2. StandardScaler then "
+		"gives each feature mean 0 and standard deviation 1, so all three weigh equally. The log comes first because "
+		"scaling alone doesn't change the shape of a distribution.",
+		[("Why not remove outliers or use RobustScaler?",
+		  "The outliers are my most valuable wholesale customers; removing them would hide the segment that matters "
+		  "most. The log tames them while keeping them. RobustScaler would be a reasonable sensitivity check.")],
+		"that the log makes the data normal: Frequency is still skewed (1.2).")),
+	# FAQ 2
+	(0, faq_note(
+		"Because the silhouette clearly peaks at two, and I didn't want to overrule my own metric for a nicer story.",
+		"I tested k from 2 to 10: 0.43 at k = 2, 0.34 at k = 3, declining to 0.28 at k = 10. The elbow is smooth. "
+		f"Davies-Bouldin also favours k = 2 ({cmp2['KMeans']['davies_bouldin']:.2f} vs {cmp4['KMeans']['davies_bouldin']:.2f} at k = 4), "
+		f"and the split is stable (ARI ≈ {stab['bootstrap_ari_mean']:.2f}). For finer targeting there's k = 4 on the next slide.",
+		[("Isn't k = 2 usually highest on silhouette anyway?",
+		  "Often, yes. That's why I also checked Davies-Bouldin and stability, and present k = 4 as the operational option.")],
+		"that two is the 'true' number of customer types.")),
+	# FAQ 3
+	(0, faq_note(
+		f"Four readable segments with a lower silhouette, {cmp4['KMeans']['silhouette']:.2f}, useful as an operational "
+		"sub-segmentation.",
+		"High-Value Active 709 customers (about 65% of revenue), Mid-Value Cooling 1,179 (24%), Mid-Value Active 855 "
+		"(5%, recent but about 2 orders), Low-Value Lapsing 1,571 (6%). The top 709 and bottom 1,571 sit entirely "
+		"inside the k = 2 groups; the two mid groups straddle the k = 2 boundary, which shows behaviour is a gradient. "
+		"Mid-Value Cooling is the natural retention watch-list.",
+		[("Then why not present k = 4 as the main result?",
+		  "Because the evidence favours k = 2. k = 4 is a business refinement, and I'd validate it with stakeholders "
+		  "and a stability check first.")],
+		"that k = 4 nests neatly inside k = 2, or that its stability was tested.")),
+	# FAQ 4
+	(0, faq_note(
+		"Customer behaviour is one continuous cloud, which suits centroid methods and defeats density methods.",
+		f"Silhouette {cmp2['KMeans']['silhouette']:.3f} / {cmp2['Hierarchical']['silhouette']:.3f} / "
+		f"{cmp2['DBSCAN']['silhouette']:.3f}; Davies-Bouldin {cmp2['KMeans']['davies_bouldin']:.2f} / "
+		f"{cmp2['Hierarchical']['davies_bouldin']:.2f} / {cmp2['DBSCAN']['davies_bouldin']:.2f}; at k = 4, K-means "
+		f"{cmp4['KMeans']['silhouette']:.3f} vs Ward {cmp4['Hierarchical']['silhouette']:.3f}. DBSCAN with eps 0.5 and "
+		f"min_samples 5 finds one dominant region plus {cmp2['DBSCAN']['noise_points']} noise points. Ward is close at "
+		"k = 2 but merges greedily, needs O(n²) memory, and can't score new customers.",
+		[("Did you tune DBSCAN?",
+		  "I used standard defaults. A k-distance plot to choose eps is the right next step, but on a continuous "
+		  "cloud tuning mostly trades noise points for one giant cluster."),
+		 ("Why not a Gaussian mixture model?",
+		  "It's a good extension: soft membership would show how confident each assignment is. It's on my next-steps list.")],
+		"that DBSCAN is a bad algorithm. It's the wrong fit for this data shape.")),
+	# FAQ 5
+	(0, faq_note(
+		f"Five transparent rules took {sig['raw_rows']:,} rows to {sig['clean_rows']:,}, and each step is logged.",
+		f"Missing CustomerID {steps[0]['removed']:,} (about a quarter), cancellations {steps[1]['removed']:,}, invalid "
+		f"prices {steps[2]['removed']:,}, non-numeric stock codes {steps[3]['removed']:,}, exact duplicates "
+		f"{steps[4]['removed']:,}.",
+		[("Doesn't dropping cancellations overstate spend?",
+		  f"Slightly. Netting returns against the original purchases would be more precise; cancellations were "
+		  f"{steps[1]['removed'] / sig['raw_rows'] * 100:.1f}% of rows."),
+		 ("Why keep only numeric stock codes?",
+		  "It removes service codes such as POST, M, D and BANK CHARGES, but it also drops real product variants "
+		  "with letter suffixes, like 85123A. That's the cleaning rule I'd revisit first.")],
+		f"that all {steps[3]['removed']:,} stock-code rows were non-products.")),
+	# FAQ 6
+	(0, faq_note(
+		"It's circular by design: the score shows the K-means labels are reproducible, not that I can predict "
+		"future purchases.",
+		"The target was created by K-means from the same scaled R, F and M, and K-means boundaries are straight "
+		f"lines in that space, so a Random Forest recovers them almost perfectly: {lost} errors in {test_n}, all near "
+		"the boundary. It's a stratified held-out test, so it isn't memorisation. Its value is a fixed, fast scoring "
+		"rule for new customers.",
+		[("Then why train a classifier at all?",
+		  "K-means' own predict could assign new customers too. The Random Forest adds feature importance and lets "
+		  "me add non-RFM features later. The honest predictive version is FAQ 7."),
+		 ("Why does accuracy change between runs?",
+		  "It moves slightly, 99.4 to 99.7%, because a handful of boundary customers flip. It doesn't change any conclusion.")],
+		f"“{acc * 100:.1f}% accuracy shows the model predicts customer behaviour.”")),
+	# FAQ 7
+	(0, faq_note(
+		"Split by time: build features only from before a cutoff date and predict purchases in a later window.",
+		"Features from 1 Dec 2010 to 31 Aug 2011; target is whether the customer buys between 1 Sep and 30 Nov "
+		"2011, a 90-day window. Validate forward in time, never shuffled, and measure ROC-AUC, precision-recall AUC "
+		"and top-decile lift against a simple 'most recent buyers' baseline.",
+		[("Why haven't you built it?",
+		  "About 12 months of data with a strong Q4 season makes one clean train/test pair tight. I prioritised a "
+		  "sound segmentation first; it's my top next step."),
+		 ("Wouldn't Q4 seasonality bias it?",
+		  "Yes. The outcome window includes the peak, so I'd compare against a same-season baseline, or use several "
+		  "cutoffs once more data exists.")],
+		"that this model has been built or evaluated.")),
+	# FAQ 8
+	(0, faq_note(
+		"Very stable: 40 refits across seeds and subsamples reproduce almost exactly the same split.",
+		f"20 seeds with a single initialisation each: mean ARI {stab['seed_ari_mean']:.3f}, minimum "
+		f"{stab['seed_ari_min']:.3f}. 20 bootstrap samples of 80%: mean {stab['bootstrap_ari_mean']:.3f}, minimum "
+		f"{stab['bootstrap_ari_min']:.3f}. ARI 1 means identical grouping; 0 means chance.",
+		[("Is k = 4 as stable?",
+		  "I haven't measured it; that's the first check before adopting k = 4 operationally.")],
+		"that k = 4 is equally stable.")),
+	# FAQ 9
+	(0, faq_note(
+		"Because the brief asked about recency, frequency and monetary value, they exist for every customer, and "
+		"marketers can act on them.",
+		"Correlations: Frequency–Monetary 0.53, Recency–Frequency −0.26, Recency–Monetary −0.12, so they're related "
+		"but not redundant. More features dilute distance-based clustering and make segments harder to name. "
+		f"Country adds little: about {uk_share:.0f}% of transactions are from the UK.",
+		[("Would PCA help?",
+		  "With three features, no. With a richer set of product and basket features, PCA or feature selection "
+		  "before clustering would make sense.")],
+		"that RFM captures everything about a customer.")),
+]
+assert len(SCRIPT) == len(prs.slides), (len(SCRIPT), len(prs.slides))
+
 running = 0
-for slide, secs, text in sorted(NOTES, key=lambda t: order[id(t[0]._element)]):
+for slide, (secs, text) in zip(prs.slides, SCRIPT):
 	running += secs
-	head = (f"[~{secs}s · running {running // 60}:{running % 60:02d}]\n" if secs else "")
+	head = f"[~{secs}s · running {running // 60}:{running % 60:02d}]\n" if secs else ""
 	slide.notes_slide.notes_text_frame.text = head + text
 
 prs.save(OUT)

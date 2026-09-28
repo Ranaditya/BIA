@@ -37,11 +37,11 @@ The saved run reports 541,909 raw rows and 4,372 distinct non-null CustomerIDs b
 | Missing customer | Drop rows without `CustomerID` when the option is enabled. | Customer-level aggregation requires a customer key. |
 | Cancellation | Drop invoice numbers beginning with `C` when enabled. | Cancellation lines should not count as completed purchases in this analysis. |
 | Price | Keep `UnitPrice >= 0.01`. | Remove zero and negative prices and enforce the configured minimum. |
-| Non-product code | Keep rows whose `StockCode` is numeric. | Exclude service or adjustment codes from product/customer purchase features. |
+| Non-numeric stock code | Keep rows whose `StockCode` is numeric. | Exclude service or adjustment codes (such as POST and BANK CHARGES). Trade-off: this also drops product variants with letter suffixes, such as `85123A`. |
 | Duplicate | Drop exact duplicate rows. | Avoid counting repeated copies of the same transaction line. |
 | Revenue | Compute `TotalPrice = Quantity * UnitPrice`. | Convert each line into its extended sales value. |
 
-In the recorded run, the sequential removals were 135,080 missing-customer rows, 8,905 cancellation rows, 44 price rows, 34,793 non-product-code rows, and 4,810 duplicates. The resulting 358,277 rows are used for RFM aggregation. Since filters run sequentially, the counts are stage-specific and must not be summed as if the categories were independent.
+In the recorded run, the sequential removals were 135,080 missing-customer rows, 8,905 cancellation rows, 44 price rows, 34,793 non-numeric stock code rows, and 4,810 duplicates. The resulting 358,277 rows are used for RFM aggregation. Since filters run sequentially, the counts are stage-specific and must not be summed as if the categories were independent.
 
 **Developer check:** the current cleaner does not explicitly reject negative `Quantity`. Review returns/credit notes in the source data before treating `Monetary` as net or gross realized revenue. The total above is line value, not necessarily recognized accounting revenue.
 

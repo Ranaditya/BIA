@@ -10,9 +10,11 @@ def clean_transactions(df,
 					   min_unit_price=0.01):
 	"""Clean raw transactions and add the line-item total price.
 
-	Missing customers, cancellation invoices, non-positive prices, non-product
-	stock codes, and duplicate rows are removed. A product stock code is
-	treated as numeric, which excludes service and adjustment codes.
+	Missing customers, cancellation invoices, non-positive prices, non-numeric
+	stock codes, and duplicate rows are removed. Keeping only numeric stock
+	codes excludes service and adjustment codes (for example POST and BANK
+	CHARGES), but it also drops product variants with letter suffixes such as
+	85123A.
 
 	Args:
 		df: Raw transaction DataFrame.
@@ -49,8 +51,8 @@ def clean_transactions(df,
 	before = len(df)
 	product_code_mask = df["StockCode"].astype("string").str.fullmatch(r"\d+", na=False)
 	df = df.loc[product_code_mask]
-	print(f"Removed non-product stock codes: {before - len(df)} rows")
-	steps.append({"step": "Non-product stock codes", "removed": before - len(df), "remaining": len(df)})
+	print(f"Removed non-numeric stock codes: {before - len(df)} rows")
+	steps.append({"step": "Non-numeric stock codes", "removed": before - len(df), "remaining": len(df)})
 
 	before = len(df)
 	df = df.drop_duplicates()

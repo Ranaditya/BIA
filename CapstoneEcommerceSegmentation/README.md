@@ -10,7 +10,7 @@ This project analyzes transaction history to group customers by purchasing behav
 | --- | --- |
 | `data/data.csv` | Raw transaction input. |
 | `data_loader.py` | Loads transactions, parses dates, and summarizes source data. |
-| `preprocessing.py` | Removes incomplete, cancelled, invalid, non-product, and duplicate rows; adds line-item revenue. |
+| `preprocessing.py` | Removes incomplete, cancelled, invalid-price, non-numeric stock code, and duplicate rows; adds line-item revenue. |
 | `features.py` | Aggregates customer-level RFM and log-scales/standardizes the features. |
 | `eda.py` | Creates exploratory charts for spending, country, sales timing, RFM relationships, and products. |
 | `clustering.py` | Evaluates KMeans values of k, fits KMeans/hierarchical/DBSCAN models, and profiles segments. |
