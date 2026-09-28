@@ -21,39 +21,47 @@ def clean_transactions(df,
 		min_unit_price: Minimum permitted UnitPrice, inclusive.
 
 	Returns:
-		A cleaned copy of ``df`` with a ``TotalPrice`` column.
+		A cleaned copy of ``df`` with a ``TotalPrice`` column. Rows removed
+		by each step are recorded in ``df.attrs["cleaning_steps"]``.
 	"""
 	df = df.copy()
 	rows_start = len(df)
+	steps = []
 
 	if drop_missing_customers:
 		before = len(df)
 		df = df.dropna(subset=["CustomerID"])
 		print(f"Removed missing customers: {before - len(df)} rows")
+		steps.append({"step": "Missing CustomerID", "removed": before - len(df), "remaining": len(df)})
 
 	if remove_cancellations:
 		before = len(df)
 		cancellation_mask = df["InvoiceNo"].astype("string").str.startswith("C", na=False)
 		df = df.loc[~cancellation_mask]
 		print(f"Removed cancellations: {before - len(df)} rows")
+		steps.append({"step": "Cancellation invoices", "removed": before - len(df), "remaining": len(df)})
 
 	before = len(df)
 	df = df.loc[df["UnitPrice"] >= min_unit_price]
 	print(f"Removed invalid prices: {before - len(df)} rows")
+	steps.append({"step": "Invalid unit price", "removed": before - len(df), "remaining": len(df)})
 
 	before = len(df)
 	product_code_mask = df["StockCode"].astype("string").str.fullmatch(r"\d+", na=False)
 	df = df.loc[product_code_mask]
 	print(f"Removed non-product stock codes: {before - len(df)} rows")
+	steps.append({"step": "Non-product stock codes", "removed": before - len(df), "remaining": len(df)})
 
 	before = len(df)
 	df = df.drop_duplicates()
 	print(f"Removed duplicates: {before - len(df)} rows")
+	steps.append({"step": "Exact duplicates", "removed": before - len(df), "remaining": len(df)})
 
 	df["TotalPrice"] = df["Quantity"] * df["UnitPrice"]
 
 	assert len(df) > 0, "cleaning removed everything"
 	assert df["UnitPrice"].min() > 0, "non-positive prices remain"
 	assert df["CustomerID"].notna().all(), "blank CustomerIDs remain"
+	df.attrs["cleaning_steps"] = steps
 	print(f"Cleaning: {rows_start} -> {len(df)} rows")
 	return df

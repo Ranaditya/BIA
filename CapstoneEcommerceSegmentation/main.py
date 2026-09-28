@@ -8,6 +8,7 @@ import pandas as pd
 import sklearn
 
 from clustering import (
+	assess_stability,
 	compare_algorithms,
 	find_optimal_k,
 	fit_kmeans,
@@ -66,6 +67,26 @@ def main():
 	print("Segment profile:")
 	print(segment_profile.to_string(index=False))
 
+	scaled_centroids = scaled.groupby(labels).mean()
+	print("Cluster centroids (scaled):")
+	print(scaled_centroids.to_string())
+
+	alternative_k = 4
+	alternative_labels = fit_kmeans(scaled, k=alternative_k)
+	alternative_profile = profile_segments(rfm, alternative_labels)
+	alternative_comparison = compare_algorithms(scaled, n_clusters=alternative_k)
+	print(f"Alternative segment profile (k={alternative_k}):")
+	print(alternative_profile.to_string(index=False))
+	print(f"Algorithm comparison (k={alternative_k}):")
+	print(alternative_comparison.to_string(index=False))
+
+	stability = assess_stability(scaled, selected_k)
+	print(
+		f"Stability ARI: seeds mean {stability['seed_ari_mean']:.3f} "
+		f"(min {stability['seed_ari_min']:.3f}); bootstrap mean "
+		f"{stability['bootstrap_ari_mean']:.3f} (min {stability['bootstrap_ari_min']:.3f})"
+	)
+
 	model, X_test, y_test, metrics = train_segment_classifier(scaled, labels)
 	y_pred = model.predict(X_test)
 	evaluation = evaluate_classifier(y_test, y_pred)
@@ -111,6 +132,27 @@ def main():
 	with signature_path.open("w", encoding="utf-8") as file:
 		json.dump(signature, file, indent=2)
 	print(json.dumps(signature, indent=2))
+
+	analysis_results = {
+		"cleaning_steps": clean.attrs.get("cleaning_steps", []),
+		"selected_k": selected_k,
+		"algorithm_comparison": comparison.to_dict(orient="records"),
+		"segment_profile": segment_profile.to_dict(orient="records"),
+		"scaled_centroids": {
+			str(cluster): row.to_dict() for cluster, row in scaled_centroids.iterrows()
+		},
+		"alternative_k": alternative_k,
+		"alternative_profile": alternative_profile.to_dict(orient="records"),
+		"alternative_comparison": alternative_comparison.to_dict(orient="records"),
+		"stability": stability,
+		"classifier_metrics": {
+			key: float(metrics[key]) for key in ["accuracy", "precision", "recall", "f1"]
+		},
+		"feature_importance": importance.to_dict(orient="records"),
+	}
+	analysis_path = Path(__file__).resolve().parent / "outputs" / "analysis_results.json"
+	with analysis_path.open("w", encoding="utf-8") as file:
+		json.dump(analysis_results, file, indent=2, default=float)
 
 	monthly = clean.groupby(clean["InvoiceDate"].dt.to_period("M")).agg(
 		revenue=("TotalPrice", "sum"),

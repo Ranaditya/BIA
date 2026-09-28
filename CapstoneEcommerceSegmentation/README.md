@@ -20,6 +20,9 @@ This project analyzes transaction history to group customers by purchasing behav
 | `main.py` | Runs the end-to-end analysis and writes a run signature. |
 | `outputs/figures/` | Generated EDA, clustering, profile, and classifier charts. |
 | `outputs/run_signature.json` | Compact record of the latest run's key counts, versions, and metrics. |
+| `outputs/analysis_results.json` | Cleaning-step counts, algorithm comparison, segment profiles for the selected k and k=4, cluster stability, classifier metrics, and feature importance. |
+| `outputs/dashboard_data.json` | Data consumed by the interactive dashboard in `dashboards/`. |
+| `reports/build_deck.py` | Builds `reports/Capstone_Ecommerce_Segmentation.pptx` from the BIA template and the `outputs/` JSON files (requires `python-pptx`). Run after `main.py`. |
 
 ## Data
 
@@ -27,7 +30,9 @@ The loader expects `data/data.csv` with the following columns:
 
 `InvoiceNo`, `StockCode`, `Description`, `Quantity`, `InvoiceDate`, `UnitPrice`, `CustomerID`, and `Country`.
 
-`InvoiceDate` is parsed as a datetime, `CustomerID` is loaded as a nullable string, and the CSV is read using Latin-1 encoding. Relative input paths are resolved from this project directory, so the commands below work from either the repository root or this project folder. The repository does not currently record the dataset's source citation or license; add those details before external distribution or submission.
+`InvoiceDate` is parsed as a datetime, `CustomerID` is loaded as a nullable string, and the CSV is read using Latin-1 encoding. Relative input paths are resolved from this project directory, so the commands below work from either the repository root or this project folder.
+
+The row count (541,909) and columns match the public **Online Retail** dataset from the UCI Machine Learning Repository: transactions of a UK-based online gift retailer between 1 Dec 2010 and 9 Dec 2011 (Chen, D. (2015). *Online Retail* [Dataset]. UCI Machine Learning Repository. https://doi.org/10.24432/C5BW33; licensed CC BY 4.0). Confirm that `data/data.csv` was obtained from that source before citing it.
 
 ## Setup and Run
 
@@ -54,8 +59,9 @@ The run prints data-quality counts, EDA interpretations, K-selection and algorit
 4. **Engineer RFM:** calculate recency in days from the latest transaction plus one day, frequency as unique invoices, and monetary value as summed line-item total.
 5. **Scale:** apply `log1p` and then `StandardScaler` to Recency, Frequency, and Monetary.
 6. **Cluster:** evaluate KMeans for k values 2 through 10 using inertia and silhouette score; compare KMeans, agglomerative hierarchical clustering, and DBSCAN.
-7. **Profile:** calculate segment sizes, mean RFM values, revenue share, and profile-based business labels.
-8. **Evaluate classifier:** use a stratified 80/20 split to train a 200-tree Random Forest to reproduce KMeans labels; report accuracy, weighted precision/recall/F1, classification report, confusion matrix, and feature importance.
+7. **Profile:** calculate segment sizes, mean RFM values, and revenue share. Segment names combine a value tier (mean of the log-scaled Frequency and Monetary z-scores) with an activity status (inverse log-scaled Recency z-score), for example `High-Value Active` or `Low-Value Lapsing`. A k=4 profile is also saved as an alternative, finer-grained view.
+8. **Check stability:** refit KMeans across 20 single-initialization seeds and 20 bootstrap subsamples (80%) and report the adjusted Rand index against the full-data labels.
+9. **Evaluate classifier:** use a stratified 80/20 split to train a 200-tree Random Forest to reproduce KMeans labels; report accuracy, weighted precision/recall/F1, classification report, confusion matrix, and feature importance.
 
 ## Current Recorded Run
 
@@ -70,7 +76,10 @@ These values are from `outputs/run_signature.json` and will vary if the data, de
 | Snapshot date | 2011-12-10 12:50:00 |
 | KMeans clusters | 2 |
 | Cluster sizes, cluster IDs 0 and 1 | 1,665; 2,649 |
+| Segment names, cluster IDs 0 and 1 | High-Value Active (85.0% of revenue); Low-Value Lapsing (15.0%) |
 | KMeans silhouette | 0.4312 |
+| KMeans Davies-Bouldin | 0.894 |
+| Stability ARI, seeds / bootstrap (mean) | 0.994 / 0.989 |
 | Random Forest cluster-label accuracy | 0.9942 |
 | Highest classifier feature importance | Frequency |
 
